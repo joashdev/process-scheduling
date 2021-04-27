@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 struct Process {
   char pid[5];
   int arrival;  // for arrival time or priority
@@ -21,8 +20,44 @@ void collector(int choice, int items, struct Process *process) {
   for (int i = 0; i < items; i++) {
     sprintf(process[i].pid, "P%d", i);
     printf("Enter for Process %d: ", i);
-	fflush(stdin);
+    fflush(stdin);
     scanf("%d %d", &process[i].arrival, &process[i].burst);
+  }
+}
+
+void sort(int choice, int items, struct Process *process) {
+  struct Process temp;
+
+  if (choice == 2) {
+    for (int i = 0; i < items; i++) {
+      int min = i;
+      for (int ii = i + 1; ii < items; ii++) {
+        if (process[min].burst > process[ii].burst) {
+          min = ii;
+        }
+      }
+
+      if (min != i) {
+        temp = process[min];
+        process[min] = process[i];
+        process[i] = temp;
+      }
+    }
+  } else {
+    for (int i = 0; i < items; i++) {
+      int min = i;
+      for (int ii = i + 1; ii < items; ii++) {
+        if (process[min].arrival > process[ii].arrival) {
+          min = ii;
+        }
+      }
+
+      if (min != i) {
+        temp = process[min];
+        process[min] = process[i];
+        process[i] = temp;
+      }
+    }
   }
 }
 
@@ -65,18 +100,23 @@ int main(int argc, char const *argv[]) {
     struct Process Processes[items];  // initialize process array
 
     collector(choice, items, &Processes);
-    switch (choice){
+    switch (choice) {
       case 1:
-        fcfs(items, &Processes);
-        // *Processes = NULL;
-		printer(items, &Processes);
-        memset(Processes, '\0', sizeof(Processes));
+        // fcfs(items, &Processes);
+
+        printer(items, &Processes);
+        sort(choice, items, &Processes);
+        printer(items, &Processes);
+        memset(Processes, '\0',
+               sizeof(Processes));  // null the struct for the next iteration of
+                                    // the program
         break;
       default:
         break;
     }
     printf("\nPress ENTER key to continue...\n");
-    while (getchar() != '\n'){}
+    while (getchar() != '\n') {
+    }
     getchar();
   } while (1);
 
